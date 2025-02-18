@@ -1,0 +1,85 @@
+/* Sidebar */
+.sidebar {
+  height: 100vh;
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #343a40;
+  color: white;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Sección del Usuario */
+.usuario {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+
+.usuario i, .usuario svg {
+  font-size: 50px; /* Ajusta el tamaño del icono */
+  color: white;
+  margin-bottom: 10px;
+}
+
+.usuario p {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Enlaces del Sidebar */
+.sidebar ul {
+  padding-left: 0;
+  list-style: none;
+  flex-grow: 1;
+}
+
+.sidebar ul li {
+  margin-bottom: 20px;
+}
+
+.sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  display: block;
+  padding: 10px 15px;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+  background-color: #007bff;
+  border-radius: 4px;
+}
+
+.sidebar ul li a.active {
+  background-color: #0056b3;
+  border-radius: 4px;
+}
+
+/* Botón de Cerrar Sesión */
+.logoutButton {
+  width: 100%;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.logoutButton:hover {
+  background-color: #c82333;
+}
