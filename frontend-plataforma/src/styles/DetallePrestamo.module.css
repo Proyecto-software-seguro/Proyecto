@@ -1,0 +1,39 @@
+/* DetallePrestamo.module.css */
+
+.detallePrestamoContainer {
+    display: flex;
+  }
+  
+  .contentContainer {
+    margin-left: 250px;
+    padding: 20px;
+    width: 100%;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .th, .td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 15px;
+  }
+  
+  .th {
+    text-align: left;
+  }
+  
+  .tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .errorMessage {
+    color: red;
+  }
+  
+  .noDataMessage {
+    font-style: italic;
+  }
+  

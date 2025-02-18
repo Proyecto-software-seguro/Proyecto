@@ -1,88 +1,76 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import Sidebar from "../../components/Sidebar"; // Se agrega la barra lateral
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import Sidebar from '../../components/Sidebar';
+import styles from '../styles/DetallePrestamo.module.css';// Importar el archivo CSS
 
-interface Loan {
-  id: string;
-  monto: number;
-  tasa: number;
-  plazo: number;
-  cuotaMensual: number;
-  estado: string;
-}
-
-const DetallePrestamo = () => {
-  const [loan, setLoan] = useState<Loan | null>(null);
+export default function DetallePrestamos() {
+  const [prestamos, setPrestamos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
-  const { prestamoId } = router.query; // Obtener el ID del préstamo de la URL
 
   useEffect(() => {
-    const fetchLoanDetails = async () => {
-      if (!prestamoId) return; // Si no hay ID, no hace nada
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      // Si no hay token, redirigir al login
+      router.push('/login');
+      return;
+    }
 
+    // Realizar la solicitud para obtener los préstamos
+    const fetchPrestamos = async () => {
       try {
-        const res = await fetch(`http://localhost:3002/api/loans/${prestamoId}`, {
-          method: "GET",
+        const res = await fetch('http://localhost:3002/api/prestamos', {
+          method: 'GET',
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, // Agregar el token en el header
           },
         });
 
-        const data = await res.json();
-
         if (!res.ok) {
-          throw new Error(data.error || "Error al obtener los detalles del préstamo.");
+          throw new Error('Error al obtener los préstamos');
         }
 
-        setLoan(data); // Establecer los detalles del préstamo
+        const data = await res.json();
+        setPrestamos(data);
       } catch (error: any) {
         setError(error.message);
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchLoanDetails();
-  }, [prestamoId]);
+    fetchPrestamos();
+  }, [router]);
 
   return (
-    <div style={detallePrestamoStyle}>
-      <Sidebar /> {/* Se muestra la barra lateral */}
-      <div style={contentStyle}>
-        <h1>Detalle del Préstamo</h1>
-        {error && <p className="text-danger">{error}</p>}
-
-        {loading ? (
-          <p>Cargando detalles del préstamo...</p>
+    <div className={styles.detallePrestamoContainer}>
+      <Sidebar />
+      <div className={styles.contentContainer}>
+        <h1>Detalles de Préstamos</h1>
+        {error && <p className={styles.errorMessage}>{error}</p>}
+        {prestamos.length === 0 ? (
+          <p className={styles.noDataMessage}>No tienes préstamos registrados.</p>
         ) : (
-          loan && (
-            <div>
-              <p><strong>ID del préstamo:</strong> {loan.id}</p>
-              <p><strong>Monto solicitado:</strong> ${loan.monto}</p>
-              <p><strong>Tasa de Interés:</strong> {loan.tasa}%</p>
-              <p><strong>Plazo:</strong> {loan.plazo} meses</p>
-              <p><strong>Cuota mensual:</strong> ${loan.cuotaMensual}</p>
-              <p><strong>Estado:</strong> {loan.estado}</p>
-            </div>
-          )
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th className={styles.th}>Fecha</th>
+                <th className={styles.th}>Monto</th>
+                <th className={styles.th}>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {prestamos.map((prestamo) => (
+                <tr key={prestamo._id} className={styles.tr}>
+                  <td className={styles.td}>{prestamo.fecha_inicio}</td> {/* Mostramos la fecha tal cual viene */}
+                  <td className={styles.td}>{prestamo.monto}</td>
+                  <td className={styles.td}>{prestamo.estado}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>
   );
-};
-
-// Estilos en línea para mantener la estructura como el Dashboard
-const detallePrestamoStyle = {
-  display: 'flex',
-};
-
-const contentStyle = {
-  marginLeft: '250px',
-  padding: '20px',
-  width: '100%',
-};
-
-export default DetallePrestamo;
+}
