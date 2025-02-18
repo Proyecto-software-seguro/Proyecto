@@ -1,6 +1,16 @@
 import Sidebar from '../../components/Sidebar';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const Dashboard = () => {
+  const router = useRouter();
+  useEffect(() => {
+    // Verificar si no hay token en localStorage
+    if (!localStorage.getItem('token')) {
+      // Redirigir al login si no existe el token
+      router.push('/login');
+    }
+  }, [router]);
   return (
     <div style={dashboardStyle}>
       <Sidebar />

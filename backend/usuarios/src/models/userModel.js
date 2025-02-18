@@ -16,14 +16,14 @@ const createUser = async (nombre, email, hashedPassword, rolId, fechaNacimiento,
 
 // OBTENER USUARIO POR EMAIL
 const getUserByEmail = async (email) => {
-    console.log("🔍 Consultando usuario con email:", email);
-
-    const query = `SELECT * FROM usuarios WHERE email = $1`;
+    const query = `
+        SELECT u.*, r.nombre AS rol_nombre
+        FROM usuarios u
+        JOIN roles r ON u.rol_id = r.id
+        WHERE u.email = $1;
+    `;
     const result = await pool.query(query, [email]);
-
-    console.log("🔍 Resultado de la consulta:", result.rows);
-
-    return result.rows[0]; 
+    return result.rows[0];
 };
 
 // OBTENER ID DE ROL POR NOMBRE

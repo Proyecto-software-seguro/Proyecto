@@ -33,7 +33,7 @@ export default function Login() {
 
       // Guardar el token en localStorage o HttpOnly cookie
       localStorage.setItem("token", data.token);
-      localStorage.setItem('userName', data.user.nombre);
+      localStorage.setItem("userName", data.user.nombre);
 
       // Redirigir a una página protegida, por ejemplo: dashboard
       router.push("/dashboard");

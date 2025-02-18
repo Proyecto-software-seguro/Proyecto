@@ -7,12 +7,14 @@ const SolicitarPrestamo = () => {
   const [tasa, setTasa] = useState<number>(0);
   const [plazo, setPlazo] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null); // Mensaje de éxito
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null); // Limpiar mensaje de éxito antes de enviar
     setLoading(true);
 
     try {
@@ -37,10 +39,15 @@ const SolicitarPrestamo = () => {
         throw new Error(data.error || "Error al solicitar el préstamo.");
       }
 
-      router.push("/prestamos-pendientes");
+      setSuccessMessage("Préstamo solicitado con éxito."); // Establecer mensaje de éxito
+      setLoading(false);
+      
+      // Opcional: Redirigir después de un breve tiempo
+      setTimeout(() => {
+        router.push("/SolicitarPrestamo");
+      }, 2000); // Redirige después de 2 segundos para que el usuario vea el mensaje
     } catch (error: any) {
       setError(error.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -51,6 +58,7 @@ const SolicitarPrestamo = () => {
       <div style={contentStyle}>
         <h1>Solicitar un Préstamo</h1>
         {error && <p className="text-danger">{error}</p>}
+        {successMessage && <p className="text-success">{successMessage}</p>} {/* Mostrar mensaje de éxito */}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="monto" className="form-label">Monto</label>
