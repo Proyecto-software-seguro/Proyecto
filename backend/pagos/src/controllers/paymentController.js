@@ -7,7 +7,7 @@ const processPayment = async (req, res) => {
     const { prestamoId, monto } = req.body;
 
     try {
-        // Verificar si el préstamo pertenece al usuario
+        // Obtener la información del préstamo
         const loanResponse = await axios.get(`http://localhost:3002/api/prestamos/${prestamoId}`, {
             headers: { Authorization: req.headers.authorization }
         });
@@ -16,30 +16,55 @@ const processPayment = async (req, res) => {
             return res.status(404).json({ error: "Préstamo no encontrado o no te pertenece." });
         }
 
-        // Convertir cuota_mensual a número
+        if (loanResponse.data.estado === "pagado") {
+            return res.status(400).json({ error: "Este préstamo ya ha sido completamente pagado." });
+        }
+
         const cuota = parseFloat(loanResponse.data.cuota_mensual);
-        const montoRedondeado = parseFloat(monto);
 
-        if (isNaN(cuota) || isNaN(montoRedondeado)) {
-            return res.status(400).json({ error: "Error: Valores de cuota o monto no válidos." });
+        // 🔹 Si el monto pagado es mayor a la cuota
+        if (monto > cuota) {
+            const cambio = monto - cuota; // Se calcula el cambio
+
+            // Registrar el pago solo por el monto de la cuota
+            await registerPayment(usuarioId, prestamoId, cuota);
+
+            // Actualizar amortización en el microservicio de préstamos
+            const amortizationResponse = await axios.put(
+                `http://localhost:3002/api/prestamos/actualizarAmortizacion`,
+                { prestamoId },
+                { headers: { Authorization: req.headers.authorization } }
+            );
+
+            return res.status(200).json({ 
+                message: `Se abonó ${cuota.toFixed(2)} USD a la cuota. Su cambio es de ${cambio.toFixed(2)} USD.`,
+                amortizacion: amortizationResponse.data.message 
+            });
         }
 
-        if (montoRedondeado.toFixed(2) !== cuota.toFixed(2)) {
-            return res.status(400).json({ error: "El monto debe coincidir con la cuota mensual." });
+        // 🔹 Si el monto pagado es exactamente igual a la cuota
+        if (monto === cuota) {
+            await registerPayment(usuarioId, prestamoId, monto);
+
+            // Actualizar amortización
+            const amortizationResponse = await axios.put(
+                `http://localhost:3002/api/prestamos/actualizarAmortizacion`,
+                { prestamoId },
+                { headers: { Authorization: req.headers.authorization } }
+            );
+
+            return res.status(200).json({ message: amortizationResponse.data.message });
         }
 
-        // Registrar pago
-        await registerPayment(usuarioId, prestamoId, montoRedondeado);
+        // 🔹 Si el monto es menor a la cuota (rechazar el pago)
+        return res.status(400).json({ error: `El monto ingresado es menor a la cuota mensual de ${cuota.toFixed(2)} USD.` });
 
-        // Actualizar estado en la tabla de amortización
-        await updateAmortizationTable(prestamoId, montoRedondeado);
-
-        res.status(200).json({ message: "Pago realizado con éxito." });
     } catch (error) {
         console.error("❌ Error al procesar el pago:", error.message);
         res.status(500).json({ error: "Error en el servidor." });
     }
 };
+
 
 
 const getAllPaymentsHistory = async (req, res) => {

@@ -1,5 +1,5 @@
 const express = require('express');
-const { requestLoan, getLoans, approveLoanRequest, rejectLoanRequest, getAmortizationByLoanId, getLoanById} = require('../controllers/loanController');
+const { requestLoan, getLoans, approveLoanRequest, rejectLoanRequest, getAmortizationByLoanId, getLoanById, updateAmortization} = require('../controllers/loanController');
 const authenticate = require('../middlewares/authenticate');
 
 const router = express.Router();
@@ -16,6 +16,7 @@ router.get('/:id', authenticate, getLoanById);
 // ==========================
 router.put('/aprobar', authenticate, approveLoanRequest);
 router.put('/rechazar', authenticate, rejectLoanRequest);
+router.put('/actualizarAmortizacion', authenticate, updateAmortization);
 
 // 🔹 Nueva ruta para obtener la amortización de un préstamo específico
 router.get('/amortizacion/:prestamoId', authenticate, getAmortizationByLoanId);

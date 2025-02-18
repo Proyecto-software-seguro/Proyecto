@@ -61,26 +61,31 @@ const generateAmortization = async (prestamoId, monto, tasa, plazo) => {
         let saldoRestante = parseFloat(monto);
 
         for (let i = 1; i <= plazo; i++) {
-            saldoRestante -= cuotaMensual;
+            // Si es la última cuota, ajustar para que el saldo restante no sea negativo
+            let cuotaFinal = i === plazo ? saldoRestante : cuotaMensual;
+
+            saldoRestante -= cuotaFinal;
 
             const query = `
                 INSERT INTO amortizacion (prestamo_id, numero_cuota, monto_cuota, saldo_restante, fecha_pago, estado)
-                VALUES ($1, $2::INTEGER, $3::NUMERIC(10,2), $4::NUMERIC(10,2), NOW() + ($2 || ' month')::INTERVAL, 'pendiente');
+                VALUES ($1, $2::INTEGER, $3::NUMERIC(10,2), $4::NUMERIC(10,2), NOW() + INTERVAL '1 month' * $2, 'pendiente');
             `;
 
             await pool.query(query, [
-                parseInt(prestamoId),  
-                parseInt(i),  
-                parseFloat(cuotaMensual.toFixed(2)),  
-                parseFloat(saldoRestante.toFixed(2))
+                parseInt(prestamoId, 10),  
+                parseInt(i, 10),  
+                parseFloat(cuotaFinal.toFixed(2)),  
+                parseFloat(Math.max(0, saldoRestante).toFixed(2)) // Evitar saldo negativo
             ]);
         }
+
         console.log(`✅ Tabla de amortización generada para préstamo ID ${prestamoId}`);
     } catch (error) {
         console.error("❌ Error al generar la tabla de amortización:", error.message);
         throw new Error("Error en la generación de amortización.");
     }
 };
+
 
 const isLoanFullyPaid = async (prestamoId) => {
     const query = `
@@ -99,8 +104,9 @@ const getLoanByIdFromDB = async (id) => {
     return result.rows[0];
 };
 
-const updateAmortizationTable = async (prestamoId, monto) => {
+const updateAmortizationTable = async (prestamoId) => {
     try {
+        // Marcar la próxima cuota como pagada
         const query = `
             UPDATE amortizacion 
             SET estado = 'pagado'
@@ -115,15 +121,37 @@ const updateAmortizationTable = async (prestamoId, monto) => {
         const result = await pool.query(query, [prestamoId]);
 
         if (result.rowCount === 0) {
-            throw new Error("No hay cuotas pendientes para este préstamo.");
+            return { message: "No hay cuotas pendientes para este préstamo." };
         }
 
-        return result.rows[0];
+        // Verificar si todas las cuotas han sido pagadas
+        const isFullyPaidQuery = `
+            SELECT COUNT(*) AS cuotas_pendientes
+            FROM amortizacion
+            WHERE prestamo_id = $1 AND estado = 'pendiente';
+        `;
+        const pendingResult = await pool.query(isFullyPaidQuery, [prestamoId]);
+
+        if (parseInt(pendingResult.rows[0].cuotas_pendientes) === 0) {
+            // Si no hay cuotas pendientes, marcar el préstamo como pagado
+            const updateLoanQuery = `
+                UPDATE prestamos
+                SET estado = 'pagado'
+                WHERE id = $1
+                RETURNING *;
+            `;
+            await pool.query(updateLoanQuery, [prestamoId]);
+
+            return { message: "Préstamo completamente pagado." };
+        }
+
+        return { message: "Cuota pagada con éxito." };
     } catch (error) {
         console.error("❌ Error al actualizar la tabla de amortización:", error.message);
         throw error;
     }
 };
+
 
 
 module.exports = { createLoan, getUserLoans, hasActiveLoan, hasLoanAwaitingApproval, approveLoan, rejectLoan, generateAmortization, isLoanFullyPaid, getLoanByIdFromDB, updateAmortizationTable};

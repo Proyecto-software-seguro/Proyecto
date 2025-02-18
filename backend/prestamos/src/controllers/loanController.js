@@ -6,7 +6,8 @@ const {
     approveLoan, 
     rejectLoan, 
     generateAmortization,
-    getLoanByIdFromDB
+    getLoanByIdFromDB,
+    updateAmortizationTable
 } = require('../models/loanModel');
 const { calcularCuotaMensual } = require('../services/amortizationService');
 const { pool } = require('../../config/db');
@@ -143,4 +144,34 @@ const getLoanById = async (req, res) => {
     }
 };
 
-module.exports = { requestLoan, approveLoanRequest, rejectLoanRequest, getLoans, getAmortizationByLoanId, getLoanById};
+const updateAmortization = async (req, res) => {
+    const { prestamoId } = req.body;
+
+    try {
+        const result = await updateAmortizationTable(prestamoId);
+        if (!result) {
+            return res.status(404).json({ error: "No hay cuotas pendientes para este préstamo." });
+        }
+
+        res.status(200).json({ message: "Amortización actualizada.", amortizacion: result });
+    } catch (error) {
+        console.error("❌ Error al actualizar la amortización en préstamos:", error.message);
+        res.status(500).json({ error: "Error interno en el microservicio de préstamos." });
+    }
+};
+
+const updateLoanAmortization = async (req, res) => {
+    const { prestamoId } = req.body;
+
+    try {
+        const result = await updateAmortizationTable(prestamoId);
+
+        res.status(200).json({ message: result.message });
+    } catch (error) {
+        console.error("❌ Error al actualizar la amortización en préstamos:", error.message);
+        res.status(500).json({ error: "Error en el servidor." });
+    }
+};
+
+
+module.exports = { requestLoan, approveLoanRequest, rejectLoanRequest, getLoans, getAmortizationByLoanId, getLoanById, updateAmortization, updateLoanAmortization};
