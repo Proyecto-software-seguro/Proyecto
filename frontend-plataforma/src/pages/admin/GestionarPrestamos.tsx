@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "../../../components/Sidebar";
+import styles from '../../styles/GestionarPrestamos.module.css'; // Importar el CSS
 
 const GestionarPrestamos = () => {
     const [prestamosPendientes, setPrestamosPendientes] = useState<any[]>([]);
@@ -84,11 +85,11 @@ const GestionarPrestamos = () => {
     return (
         <div style={{ display: "flex" }}>
             <Sidebar role={role} />
-            <div style={{ marginLeft: "250px", padding: "20px", width: "100%" }}>
-                <h1>Gestionar Préstamos</h1>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
-                <table>
+            <div className={styles.container}>
+                <h1 className={styles.title}>Gestionar Préstamos</h1>
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
+                <table className={styles.table}>
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -105,13 +106,13 @@ const GestionarPrestamos = () => {
                             <td>{prestamo.plazo} meses</td>
                             <td>
                                 <button
-                                    style={{ marginRight: "10px", backgroundColor: "green", color: "white" }}
+                                    className={`${styles.actionButton} ${styles.approve}`}
                                     onClick={() => handleAprobar(prestamo.id)}
                                 >
                                     Aprobar
                                 </button>
                                 <button
-                                    style={{ backgroundColor: "red", color: "white" }}
+                                    className={`${styles.actionButton} ${styles.reject}`}
                                     onClick={() => handleRechazar(prestamo.id)}
                                 >
                                     Rechazar

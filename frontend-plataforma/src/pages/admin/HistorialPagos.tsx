@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "../../../components/Sidebar";
+import styles from '../../styles/HistorialPagos.module.css'; // Importar el CSS
 
 const HistorialPagos = () => {
     const [historialPagos, setHistorialPagos] = useState<any[]>([]);
@@ -39,10 +40,10 @@ const HistorialPagos = () => {
     return (
         <div style={{ display: "flex" }}>
             <Sidebar role={role} />
-            <div style={{ marginLeft: "250px", padding: "20px", width: "100%" }}>
-                <h1>Historial de Pagos</h1>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                <table>
+            <div className={styles.container}>
+                <h1 className={styles.title}>Historial de Pagos</h1>
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                <table className={styles.table}>
                     <thead>
                     <tr>
                         <th>ID</th>

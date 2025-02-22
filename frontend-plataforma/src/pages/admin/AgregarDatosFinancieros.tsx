@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "../../../components/Sidebar";
+import styles from '../../styles/AgregarDatosFinancieros.module.css';// Importar el CSS
 
 const AgregarDatosFinancieros = () => {
     const [usuarioId, setUsuarioId] = useState<string>("");
@@ -46,42 +47,48 @@ const AgregarDatosFinancieros = () => {
     return (
         <div style={{ display: "flex" }}>
             <Sidebar role={role} />
-            <div style={{ marginLeft: "250px", padding: "20px", width: "100%" }}>
-                <h1>Agregar Datos Financieros</h1>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="usuarioId">ID del Usuario:</label>
+            <div className={styles.container}>
+                <h1 className={styles.title}>Agregar Datos Financieros</h1>
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
+                <form onSubmit={handleSubmit} className={styles.form}>
+                    <div className={styles.formGroup}>
+                        <label className={styles.label} htmlFor="usuarioId">ID del Usuario:</label>
                         <input
                             type="text"
                             id="usuarioId"
                             value={usuarioId}
                             onChange={(e) => setUsuarioId(e.target.value)}
+                            className={styles.input}
+                            placeholder="Ingrese el ID del usuario"
                             required
                         />
                     </div>
-                    <div>
-                        <label htmlFor="ingresosMensuales">Ingresos Mensuales:</label>
+                    <div className={styles.formGroup}>
+                        <label className={styles.label} htmlFor="ingresosMensuales">Ingresos Mensuales:</label>
                         <input
                             type="number"
                             id="ingresosMensuales"
                             value={ingresosMensuales}
                             onChange={(e) => setIngresosMensuales(Number(e.target.value))}
+                            className={styles.input}
+                            placeholder="Ingrese los ingresos mensuales"
                             required
                         />
                     </div>
-                    <div>
-                        <label htmlFor="numeroCuenta">Número de Cuenta:</label>
+                    <div className={styles.formGroup}>
+                        <label className={styles.label} htmlFor="numeroCuenta">Número de Cuenta:</label>
                         <input
                             type="text"
                             id="numeroCuenta"
                             value={numeroCuenta}
                             onChange={(e) => setNumeroCuenta(e.target.value)}
+                            className={styles.input}
+                            placeholder="Ingrese el número de cuenta"
                             required
                         />
                     </div>
-                    <button type="submit">Agregar Datos Financieros</button>
+                    <button type="submit" className={styles.submitButton}>Agregar Datos Financieros</button>
                 </form>
             </div>
         </div>

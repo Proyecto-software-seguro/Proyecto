@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "../../../components/Sidebar";
+import styles from '../../styles/VerPerfilUsuario.module.css';
 
 const VerPerfilUsuario = () => {
     const [usuarioId, setUsuarioId] = useState<string>("");
@@ -39,21 +40,22 @@ const VerPerfilUsuario = () => {
     return (
         <div style={{ display: "flex" }}>
             <Sidebar role={role} />
-            <div style={{ marginLeft: "250px", padding: "20px", width: "100%" }}>
-                <h1>Ver Perfil de Usuario</h1>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="usuarioId">ID del Usuario:</label>
+            <div className={styles.container}>
+                <h1 className={styles.title}>Ver Perfil de Usuario</h1>
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                <form onSubmit={handleSubmit} className={styles.form}>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="usuarioId" className={styles.label}>ID del Usuario:</label>
                         <input
                             type="text"
                             id="usuarioId"
                             value={usuarioId}
                             onChange={(e) => setUsuarioId(e.target.value)}
+                            className={styles.input}
                             required
                         />
                     </div>
-                    <button type="submit">Buscar Perfil</button>
+                    <button type="submit" className={styles.submitButton}>Buscar Perfil</button>
                 </form>
 
                 {perfil && (

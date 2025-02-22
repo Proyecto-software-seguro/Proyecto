@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "../../../components/Sidebar";
+import styles from '../../styles/AgregarHistorialCrediticio.module.css';// Importar el CSS
 
 const AgregarHistorialCrediticio = () => {
     const [usuarioId, setUsuarioId] = useState<string>("");
@@ -46,41 +47,47 @@ const AgregarHistorialCrediticio = () => {
     return (
         <div style={{ display: "flex" }}>
             <Sidebar role={role} />
-            <div style={{ marginLeft: "250px", padding: "20px", width: "100%" }}>
-                <h1>Agregar Historial Crediticio</h1>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="usuarioId">ID del Usuario:</label>
+            <div className={styles.container}>
+                <h1 className={styles.title}>Agregar Historial Crediticio</h1>
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
+                <form onSubmit={handleSubmit} className={styles.form}>
+                    <div className={styles.formGroup}>
+                        <label className={styles.label} htmlFor="usuarioId">ID del Usuario:</label>
                         <input
                             type="text"
                             id="usuarioId"
                             value={usuarioId}
                             onChange={(e) => setUsuarioId(e.target.value)}
+                            className={styles.input}
+                            placeholder="Ingrese el ID del usuario"
                             required
                         />
                     </div>
-                    <div>
-                        <label htmlFor="descripcion">Descripción:</label>
+                    <div className={styles.formGroup}>
+                        <label className={styles.label} htmlFor="descripcion">Descripción:</label>
                         <textarea
                             id="descripcion"
                             value={descripcion}
                             onChange={(e) => setDescripcion(e.target.value)}
+                            className={styles.textarea}
+                            placeholder="Ingrese una descripción"
                             required
                         />
                     </div>
-                    <div>
-                        <label htmlFor="puntaje">Puntaje Crediticio:</label>
+                    <div className={styles.formGroup}>
+                        <label className={styles.label} htmlFor="puntaje">Puntaje Crediticio:</label>
                         <input
                             type="number"
                             id="puntaje"
                             value={puntaje}
                             onChange={(e) => setPuntaje(Number(e.target.value))}
+                            className={styles.input}
+                            placeholder="Ingrese el puntaje crediticio"
                             required
                         />
                     </div>
-                    <button type="submit">Agregar Historial Crediticio</button>
+                    <button type="submit" className={styles.submitButton}>Agregar Historial Crediticio</button>
                 </form>
             </div>
         </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "../../../components/Sidebar";
+import styles from '../../styles/VerAmortizacion.module.css'; // Importar el CSS
 
 const VerAmortizacion = () => {
     const [amortizacion, setAmortizacion] = useState<any[]>([]);
@@ -42,10 +43,10 @@ const VerAmortizacion = () => {
     return (
         <div style={{ display: "flex" }}>
             <Sidebar role={role} />
-            <div style={{ marginLeft: "250px", padding: "20px", width: "100%" }}>
-                <h1>Amortización del Préstamo</h1>
-                {error && <p style={{ color: "red" }}>{error}</p>}
-                <table>
+            <div className={styles.container}>
+                <h1 className={styles.title}>Amortización del Préstamo</h1>
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                <table className={styles.table}>
                     <thead>
                     <tr>
                         <th>Número de Cuota</th>
