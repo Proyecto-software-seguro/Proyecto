@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Sidebar from "../../components/Sidebar"; // Se agrega la barra lateral
+import Sidebar from "../../../components/Sidebar"; // Se agrega la barra lateral
 
 const SolicitarPrestamo = () => {
   const [monto, setMonto] = useState<number>(0);
@@ -10,6 +10,7 @@ const SolicitarPrestamo = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null); // Mensaje de éxito
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const role = localStorage.getItem('role') as 'administrador' | 'cliente';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +42,7 @@ const SolicitarPrestamo = () => {
 
       setSuccessMessage("Préstamo solicitado con éxito."); // Establecer mensaje de éxito
       setLoading(false);
-      
+
       // Opcional: Redirigir después de un breve tiempo
       setTimeout(() => {
         router.push("/SolicitarPrestamo");
@@ -54,7 +55,7 @@ const SolicitarPrestamo = () => {
 
   return (
     <div style={solicitarPrestamoStyle}>
-      <Sidebar /> {/* Se muestra la barra lateral */}
+      <Sidebar role={role} /> {/* Se muestra la barra lateral */}
       <div style={contentStyle}>
         <h1>Solicitar un Préstamo</h1>
         {error && <p className="text-danger">{error}</p>}

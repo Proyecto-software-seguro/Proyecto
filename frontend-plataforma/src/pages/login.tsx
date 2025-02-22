@@ -31,9 +31,10 @@ export default function Login() {
         throw new Error(data.error || "Error al autenticar al usuario.");
       }
 
-      // Guardar el token en localStorage o HttpOnly cookie
+      // Guardar el token, nombre y rol en localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("userName", data.user.nombre);
+      localStorage.setItem("role", data.user.rol); // Almacenar el rol del usuario
 
       // Redirigir a una página protegida, por ejemplo: dashboard
       router.push("/dashboard");
@@ -48,32 +49,32 @@ export default function Login() {
   };
 
   return (
-    <div className={styles['login-page']}>
-      <div className={styles.container}>
-        <h1>Iniciar sesión</h1>
-        {error && <p className={styles['error-message']}>{error}</p>}
-        <form onSubmit={handleSubmit}>
-          <input
-            className={styles['input-field']}
-            type="email"
-            placeholder="Correo electrónico"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            className={styles['input-field']}
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button className={styles['submit-button']} type="submit">Ingresar</button>
-        </form>
+      <div className={styles['login-page']}>
+        <div className={styles.container}>
+          <h1>Iniciar sesión</h1>
+          {error && <p className={styles['error-message']}>{error}</p>}
+          <form onSubmit={handleSubmit}>
+            <input
+                className={styles['input-field']}
+                type="email"
+                placeholder="Correo electrónico"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+            />
+            <input
+                className={styles['input-field']}
+                type="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+            />
+            <button className={styles['submit-button']} type="submit">Ingresar</button>
+          </form>
 
-        <p className={styles.footer}>¿No tienes cuenta? <button className={styles['registerButton']} onClick={handleRedirectToRegister}>Regístrate aquí</button></p>
+          <p className={styles.footer}>¿No tienes cuenta? <button className={styles['registerButton']} onClick={handleRedirectToRegister}>Regístrate aquí</button></p>
+        </div>
       </div>
-    </div>
   );
 }

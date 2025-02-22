@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 
 const Dashboard = () => {
   const router = useRouter();
+  const role = localStorage.getItem('role') as 'administrador' | 'cliente';
+
   useEffect(() => {
     // Verificar si no hay token en localStorage
     if (!localStorage.getItem('token')) {
@@ -11,14 +13,15 @@ const Dashboard = () => {
       router.push('/login');
     }
   }, [router]);
+
   return (
-    <div style={dashboardStyle}>
-      <Sidebar />
-      <div style={contentStyle}>
-        <h1>Bienvenido al Dashboard</h1>
-        <p>Contenido del dashboard...</p>
+      <div style={dashboardStyle}>
+        <Sidebar role={role} />
+        <div style={contentStyle}>
+          <h1>Bienvenido al Dashboard</h1>
+          <p>Contenido del dashboard...</p>
+        </div>
       </div>
-    </div>
   );
 };
 

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import Sidebar from '../../components/Sidebar';
-import styles from '../styles/DetallePrestamo.module.css';// Importar el archivo CSS
+import Sidebar from '../../../components/Sidebar';
+import styles from '../../styles/DetallePrestamo.module.css';// Importar el archivo CSS
 
 export default function DetallePrestamos() {
   const [prestamos, setPrestamos] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const role = localStorage.getItem('role') as 'administrador' | 'cliente';
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -44,7 +45,7 @@ export default function DetallePrestamos() {
 
   return (
     <div className={styles.detallePrestamoContainer}>
-      <Sidebar />
+      <Sidebar role={role} /> {/* Se muestra la barra lateral */}
       <div className={styles.contentContainer}>
         <h1>Detalles de Préstamos</h1>
         {error && <p className={styles.errorMessage}>{error}</p>}
