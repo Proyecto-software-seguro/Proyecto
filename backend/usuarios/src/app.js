@@ -9,7 +9,14 @@ const { connectDB } = require('../config/db');  // Configuración de la base de 
 const app = express();
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: ['http://localhost:3001'], // Agrega los orígenes de confianza
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Especifica los métodos permitidos
+  allowedHeaders: ['Content-Type', 'Authorization'], // Define los encabezados permitidos
+};
+
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json());
 
 // Rutas
