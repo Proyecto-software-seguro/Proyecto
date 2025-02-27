@@ -1,0 +1,55 @@
+/* EstadoPagos.module.css */
+
+.estadoPagosContainer {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    font-family: 'Poppins', sans-serif;
+}
+
+.contentContainer {
+    margin-left: 250px;
+    padding: 30px;
+    width: 100%;
+    max-width: 900px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 20px auto;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.table th, .table td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+}
+
+.table th {
+    background-color: #007bff;
+    color: white;
+}
+
+.table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.errorMessage {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+}

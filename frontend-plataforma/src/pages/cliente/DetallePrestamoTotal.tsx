@@ -57,6 +57,7 @@ export default function DetallePrestamoTotal() {
         {error && <p className={styles.errorMessage}>{error}</p>}
         {prestamo ? (
           <div>
+            <p><strong>ID:</strong> {prestamo.id}</p>
             <p><strong>Fecha de Inicio:</strong> {new Date(prestamo.fecha_inicio).toLocaleString()}</p>
             <p><strong>Monto:</strong> ${prestamo.monto.toLocaleString()}</p>
             <p><strong>Tasa:</strong> {prestamo.tasa}%</p>
