@@ -1,0 +1,90 @@
+/* DetallePrestamoTotal.module.css */
+
+.detallePrestamoTotalContainer {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Contenedor principal */
+.contentContainer {
+    margin-left: 250px;
+    padding: 30px;
+    width: 100%;
+    max-width: 900px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 20px auto;
+}
+
+/* Título */
+.title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+/* Tarjeta de detalles */
+.detailsCard {
+    background: linear-gradient(to right, #ffffff, #f9fafb);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+/* Filas de detalles */
+.detailRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.detailRow:last-child {
+    border-bottom: none;
+}
+
+/* Etiquetas */
+.detailLabel {
+    font-weight: 600;
+    color: #444;
+}
+
+/* Valores */
+.detailValue {
+    color: #666;
+}
+
+/* Mensaje de error */
+.errorMessage {
+    color: red;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* Botón de regreso */
+.backButton {
+    display: block;
+    margin: 30px auto;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    text-align: center;
+}
+
+.backButton:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
