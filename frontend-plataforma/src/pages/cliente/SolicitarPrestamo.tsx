@@ -45,7 +45,7 @@ const SolicitarPrestamo = () => {
 
       // Opcional: Redirigir después de un breve tiempo
       setTimeout(() => {
-        router.push("/SolicitarPrestamo");
+        router.push("/cliente/DetallePrestamo");
       }, 2000); // Redirige después de 2 segundos para que el usuario vea el mensaje
     } catch (error: any) {
       setError(error.message);

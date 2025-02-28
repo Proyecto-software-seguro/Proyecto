@@ -94,12 +94,24 @@ const rejectLoanRequest = async (req, res) => {
 // 🚀 Obtener préstamos del usuario
 // ==========================
 const getLoans = async (req, res) => {
-    const usuarioId = req.user.id;
-
     try {
-        const loans = await getUserLoans(usuarioId);
+        let loans;
+        if (req.user.rol === "administrador") {
+            // Obtener préstamos pendientes de aprobación para el administrador
+            const query = "SELECT * FROM prestamos WHERE estado = 'pendiente_aprobacion'";
+            const result = await pool.query(query);
+            loans = result.rows;
+        } else {
+            // Obtener préstamos del cliente
+            loans = await getUserLoans(req.user.id);
+        }
+
         if (loans.length === 0) {
-            return res.status(404).json({ message: "No tienes préstamos registrados." });
+            return res.status(404).json({
+                message: req.user.rol === "administrador"
+                    ? "No hay préstamos pendientes de aprobación."
+                    : "No tienes préstamos registrados."
+            });
         }
 
         res.status(200).json(loans);

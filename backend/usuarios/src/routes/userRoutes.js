@@ -1,13 +1,14 @@
-// src/routes/userRoutes.js
-
 const express = require('express');
-const { 
-    registerUser, 
-    loginUser, 
-    verifyUser, 
-    getUserProfile, 
-    createFinancialData, 
-    addCreditHistory 
+const {
+    registerUser,
+    loginUser,
+    verifyUser,
+    getUserProfile,
+    createFinancialData,
+    addCreditHistory,
+    getFinancialData,
+    getCreditHistory,
+    getAllUsers
 } = require('../controllers/userController');
 
 const authenticate = require('../middlewares/authenticate');
@@ -19,12 +20,19 @@ const router = express.Router();
 // ==========================
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.get('/verify', verifyUser);  // Nueva ruta de verificación
-router.get('/perfil', authenticate, getUserProfile);
+router.get('/verify', verifyUser);
+
+// ==========================
+// RUTAS DE PERFIL Y DATOS
+// ==========================
+router.get('/perfil/:usuarioId', authenticate, getUserProfile);
+router.get('/:usuarioId/datos-financieros', authenticate, getFinancialData);
+router.get('/:usuarioId/historial-crediticio', authenticate, getCreditHistory);
 
 // ==========================
 // RUTAS DE ADMINISTRADORES
 // ==========================
+router.get('/', authenticate, getAllUsers);
 router.post('/financiero', authenticate, createFinancialData);
 router.post('/crediticio', authenticate, addCreditHistory);
 

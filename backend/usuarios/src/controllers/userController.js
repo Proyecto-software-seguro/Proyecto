@@ -67,9 +67,21 @@ const registerUser = async (req, res) => {
 // PERFIL DE USUARIO
 const getUserProfile = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const financialData = await getFinancialDataByUserId(userId);
-        const creditHistory = await getCreditHistoryByUserId(userId);
+        const { usuarioId } = req.params;
+
+        // Si no es administrador, solo puede ver su propio perfil
+        if (req.user.rol !== 'administrador' && req.user.id !== usuarioId) {
+            return res.status(403).json({ error: 'No tienes permiso para ver este perfil' });
+        }
+
+        // Obtener datos financieros y historial crediticio
+        const financialData = await getFinancialDataByUserId(usuarioId);
+        const creditHistory = await getCreditHistoryByUserId(usuarioId);
+
+        // Verificar si se encontraron datos
+        if (!financialData && !creditHistory) {
+            return res.status(404).json({ error: 'No se encontraron datos para este usuario' });
+        }
 
         res.status(200).json({
             financial_data: financialData || {},
@@ -78,6 +90,83 @@ const getUserProfile = async (req, res) => {
     } catch (error) {
         console.error('Error al obtener perfil:', error.message);
         res.status(500).json({ error: 'Error al obtener el perfil' });
+    }
+};
+
+// OBTENER DATOS FINANCIEROS
+const getFinancialData = async (req, res) => {
+    try {
+        const { usuarioId } = req.params;
+
+        // Verificar permisos
+        if (req.user.rol !== 'administrador' && req.user.id !== usuarioId) {
+            return res.status(403).json({ error: 'No tienes permiso para ver estos datos' });
+        }
+
+        const financialData = await getFinancialDataByUserId(usuarioId);
+        if (!financialData) {
+            return res.status(404).json({ error: 'No se encontraron datos financieros' });
+        }
+
+        res.status(200).json(financialData);
+    } catch (error) {
+        console.error('Error al obtener datos financieros:', error.message);
+        res.status(500).json({ error: 'Error al obtener datos financieros' });
+    }
+};
+
+// OBTENER HISTORIAL CREDITICIO
+const getCreditHistory = async (req, res) => {
+    try {
+        const { usuarioId } = req.params;
+
+        // Verificar permisos
+        if (req.user.rol !== 'administrador' && req.user.id !== usuarioId) {
+            return res.status(403).json({ error: 'No tienes permiso para ver este historial' });
+        }
+
+        const creditHistory = await getCreditHistoryByUserId(usuarioId);
+        if (!creditHistory) {
+            return res.status(404).json({ error: 'No se encontró historial crediticio' });
+        }
+
+        res.status(200).json(creditHistory);
+    } catch (error) {
+        console.error('Error al obtener historial crediticio:', error.message);
+        res.status(500).json({ error: 'Error al obtener historial crediticio' });
+    }
+};
+
+// OBTENER TODOS LOS USUARIOS
+const getAllUsers = async (req, res) => {
+    try {
+        // Verificar que el usuario sea administrador
+        if (req.user.rol !== 'administrador') {
+            return res.status(403).json({ error: 'No tienes permiso para ver esta información' });
+        }
+
+        // Consulta modificada para obtener más información
+        const result = await pool.query(`
+            SELECT 
+                u.id,
+                u.nombre,
+                u.apellido,
+                u.email
+            FROM usuarios u
+            INNER JOIN roles r ON u.rol_id = r.id
+            WHERE r.nombre = 'cliente'
+            AND u.is_verified = true
+            ORDER BY u.nombre ASC
+        `);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'No hay usuarios registrados' });
+        }
+
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error al obtener usuarios:', error.message);
+        res.status(500).json({ error: 'Error al obtener usuarios' });
     }
 };
 
@@ -206,5 +295,8 @@ module.exports = {
     createFinancialData: createFinancialDataHandler,
     addCreditHistory: addCreditHistoryHandler,
     loginUser,
-    verifyUser
+    verifyUser,
+    getFinancialData,
+    getCreditHistory,
+    getAllUsers
 };

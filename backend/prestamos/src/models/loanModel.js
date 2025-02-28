@@ -14,7 +14,7 @@ const createLoan = async (usuarioId, monto, tasa, plazo, cuotaMensual, estado) =
 const approveLoan = async (prestamoId) => {
     const query = `
         UPDATE prestamos
-        SET estado = 'pendiente'
+        SET estado = 'aprobado'
         WHERE id = $1 AND estado = 'pendiente_aprobacion'
         RETURNING *;
     `;

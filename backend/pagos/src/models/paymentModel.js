@@ -4,7 +4,7 @@ const registerPayment = async (usuarioId, prestamoId, monto) => {
     const query = `
         INSERT INTO pagos (usuario_id, prestamo_id, monto, fecha_pago)
         VALUES ($1, $2, $3, NOW())
-        RETURNING *;
+            RETURNING *;
     `;
     const values = [usuarioId, prestamoId, monto];
     const result = await pool.query(query, values);
@@ -13,10 +13,9 @@ const registerPayment = async (usuarioId, prestamoId, monto) => {
 
 const getUserPayments = async () => {
     const query = `
-        SELECT p.id, u.nombre AS usuario, p.monto, p.fecha_pago
-        FROM pagos p
-        JOIN usuarios u ON p.usuario_id = u.id
-        ORDER BY p.fecha_pago DESC;
+        SELECT id, usuario_id as usuario, monto, fecha_pago
+        FROM pagos
+        ORDER BY fecha_pago DESC;
     `;
     const result = await pool.query(query);
     return result.rows;

@@ -17,7 +17,7 @@ const GestionarPrestamos = () => {
 
         const fetchPrestamosPendientes = async () => {
             try {
-                const res = await fetch("http://localhost:3002/api/prestamos", {
+                const res = await fetch("http://localhost:3002/api/prestamos/", {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -25,7 +25,7 @@ const GestionarPrestamos = () => {
                 });
 
                 if (!res.ok) {
-                    throw new Error("Error al obtener préstamos pendientes");
+                    throw new Error(" ");
                 }
 
                 const data = await res.json();

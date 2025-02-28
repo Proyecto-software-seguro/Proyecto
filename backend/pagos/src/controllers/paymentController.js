@@ -74,10 +74,19 @@ const getAllPaymentsHistory = async (req, res) => {
 
     try {
         const payments = await getUserPayments();
-        res.status(200).json(payments);
+
+        // Transformar los datos antes de enviarlos
+        const formattedPayments = payments.map(payment => ({
+            id: payment.id,
+            usuario: payment.usuario, // Ahora es el ID del usuario
+            monto: parseFloat(payment.monto),
+            fecha_pago: payment.fecha_pago
+        }));
+
+        res.status(200).json(formattedPayments);
     } catch (error) {
         console.error("❌ Error al obtener historial de pagos:", error.message);
-        res.status(500).json({ error: "Error en el servidor." });
+        res.status(500).json({ error: "Error al obtener el historial de pagos" });
     }
 };
 
