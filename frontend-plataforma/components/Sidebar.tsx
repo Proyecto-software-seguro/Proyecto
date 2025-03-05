@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { FaUserCircle } from 'react-icons/fa'; // Icono de usuario
+import { FaUserCircle } from 'react-icons/fa';
 import styles from '../src/styles/Sidebar.module.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react'; // Importa useState
 import { useRouter } from 'next/router';
 
 interface SidebarProps {
@@ -10,31 +10,36 @@ interface SidebarProps {
 
 const Sidebar = ({ role }: SidebarProps) => {
     const router = useRouter();
+    const [userName, setUserName] = useState<string | null>(null); // Estado para el nombre de usuario
+
     useEffect(() => {
-        // Verificar si no hay token en localStorage
-        if (!localStorage.getItem('token')) {
-            // Redirigir al login si no existe el token
-            router.push('/login');
+        if (typeof window !== 'undefined') {
+            // Verificar si no hay token en localStorage
+            if (!localStorage.getItem('token')) {
+                // Redirigir al login si no existe el token
+                router.push('/login');
+            } else {
+                // Recuperar el nombre del usuario
+                const storedUserName = localStorage.getItem('userName');
+                setUserName(storedUserName);
+            }
         }
     }, [router]);
 
-    const userName = localStorage.getItem("userName"); // Recuperar el nombre del usuario
     const handleLogout = () => {
         // Limpiar el localStorage y redirigir al login
-        localStorage.removeItem("token");  // Asegúrate de remover el token también
-        localStorage.removeItem("userName");  // Limpiar el nombre del usuario
-        localStorage.removeItem("role");  // Limpiar el rol del usuario
-        router.push('/login'); // Redirigir a la página de login
+        localStorage.removeItem('token');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('role');
+        router.push('/login');
     };
 
     return (
         <div className={styles.sidebar}>
             <div className={styles.usuario}>
-                {/* Icono de usuario de Bootstrap */}
                 <FaUserCircle />
-                {userName && <p>{`Hola, ${userName}`}</p>} {/* Mostrar el nombre del usuario */}
+                {userName && <p>{`Hola, ${userName}`}</p>}
             </div>
-
             <ul>
                 {role === 'administrador' ? (
                     <>

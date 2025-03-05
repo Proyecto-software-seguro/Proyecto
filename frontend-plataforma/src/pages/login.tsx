@@ -35,7 +35,7 @@ export default function Login() {
       localStorage.setItem("token", data.token);
       localStorage.setItem("userName", data.user.nombre);
       localStorage.setItem("role", data.user.rol); // Almacenar el rol del usuario
-
+      localStorage.setItem("id_usuario", data.user.id);
       // Redirigir a una página protegida, por ejemplo: dashboard
       router.push("/dashboard");
     } catch (err: any) {

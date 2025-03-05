@@ -99,7 +99,7 @@ const getFinancialData = async (req, res) => {
         const { usuarioId } = req.params;
 
         // Verificar permisos
-        if (req.user.rol !== 'administrador' && req.user.id !== usuarioId) {
+        if (req.user.rol !== 'administrador' && req.user.id !== usuarioId && req.user.rol !== 'cliente') {
             return res.status(403).json({ error: 'No tienes permiso para ver estos datos' });
         }
 
@@ -121,7 +121,7 @@ const getCreditHistory = async (req, res) => {
         const { usuarioId } = req.params;
 
         // Verificar permisos
-        if (req.user.rol !== 'administrador' && req.user.id !== usuarioId) {
+        if ( req.user.rol !== 'administrador' && req.user.id !== usuarioId && req.user.rol !== 'cliente') {
             return res.status(403).json({ error: 'No tienes permiso para ver este historial' });
         }
 

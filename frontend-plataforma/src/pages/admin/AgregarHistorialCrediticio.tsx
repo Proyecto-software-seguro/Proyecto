@@ -1,16 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "../../../components/Sidebar";
-import styles from '../../styles/AgregarHistorialCrediticio.module.css';// Importar el CSS
+import styles from '../../styles/AgregarHistorialCrediticio.module.css';
 
 const AgregarHistorialCrediticio = () => {
+    const router = useRouter();
+    const [role, setRole] = useState<"administrador" | "cliente" | null>(null);
     const [usuarioId, setUsuarioId] = useState<string>("");
     const [descripcion, setDescripcion] = useState<string>("");
     const [puntaje, setPuntaje] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const router = useRouter();
-    const role = localStorage.getItem("role") as "administrador" | "cliente";
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            // Verificar si no hay token en localStorage
+            if (!localStorage.getItem('token')) {
+                // Redirigir al login si no existe el token
+                router.push('/login');
+            } else {
+                // Recuperar el rol del usuario
+                const storedRole = localStorage.getItem("role") as "administrador" | "cliente";
+                setRole(storedRole);
+            }
+        }
+    }, [router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -43,6 +57,11 @@ const AgregarHistorialCrediticio = () => {
             setError(error.message);
         }
     };
+
+    // Si no se ha cargado el rol, mostrar mensaje de carga
+    if (!role) {
+        return <p>Cargando...</p>;
+    }
 
     return (
         <div style={{ display: "flex" }}>

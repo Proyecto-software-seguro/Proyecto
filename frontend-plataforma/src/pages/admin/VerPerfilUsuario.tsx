@@ -4,11 +4,25 @@ import Sidebar from "../../../components/Sidebar";
 import styles from '../../styles/VerPerfilUsuario.module.css';
 
 const VerPerfilUsuario = () => {
+    const router = useRouter();
+    const [role, setRole] = useState<"administrador" | "cliente" | null>(null);
     const [usuarioId, setUsuarioId] = useState<string>("");
     const [perfil, setPerfil] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
-    const role = localStorage.getItem("role") as "administrador" | "cliente";
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            // Verificar si no hay token en localStorage
+            if (!localStorage.getItem('token')) {
+                // Redirigir al login si no existe el token
+                router.push('/login');
+            } else {
+                // Recuperar el rol del usuario
+                const storedRole = localStorage.getItem("role") as "administrador" | "cliente";
+                setRole(storedRole);
+            }
+        }
+    }, [router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,6 +50,11 @@ const VerPerfilUsuario = () => {
             setError(error.message);
         }
     };
+
+    // Si no se ha cargado el rol, mostrar mensaje de carga
+    if (!role) {
+        return <p>Cargando...</p>;
+    }
 
     return (
         <div style={{ display: "flex" }}>

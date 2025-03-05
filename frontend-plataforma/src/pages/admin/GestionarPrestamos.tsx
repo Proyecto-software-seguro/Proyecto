@@ -1,42 +1,58 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "../../../components/Sidebar";
-import styles from '../../styles/GestionarPrestamos.module.css'; // Importar el CSS
+import styles from '../../styles/GestionarPrestamos.module.css';
 
 const GestionarPrestamos = () => {
+    const router = useRouter();
+    const [role, setRole] = useState<"administrador" | "cliente" | null>(null);
     const [prestamosPendientes, setPrestamosPendientes] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const router = useRouter();
-    const role = localStorage.getItem("role") as "administrador" | "cliente";
 
     useEffect(() => {
-        if (role !== "administrador") {
+        if (typeof window !== 'undefined') {
+            // Verificar si no hay token en localStorage
+            if (!localStorage.getItem('token')) {
+                // Redirigir al login si no existe el token
+                router.push('/login');
+            } else {
+                // Recuperar el rol del usuario
+                const storedRole = localStorage.getItem("role") as "administrador" | "cliente";
+                setRole(storedRole);
+            }
+        }
+    }, [router]);
+
+    useEffect(() => {
+        // Solo intentar cargar préstamos si el rol es de administrador
+        if (role === "administrador") {
+            const fetchPrestamosPendientes = async () => {
+                try {
+                    const res = await fetch("http://localhost:3002/api/prestamos/", {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                        },
+                    });
+
+                    if (!res.ok) {
+                        throw new Error("Error al cargar los préstamos");
+                    }
+
+                    const data = await res.json();
+                    setPrestamosPendientes(data.filter((p: any) => p.estado === "pendiente_aprobacion"));
+                } catch (error: any) {
+                    setError(error.message);
+                }
+            };
+
+            fetchPrestamosPendientes();
+        } else if (role === "cliente") {
+            // Redirigir a dashboard si no es administrador
             router.push("/dashboard");
         }
-
-        const fetchPrestamosPendientes = async () => {
-            try {
-                const res = await fetch("http://localhost:3002/api/prestamos/", {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
-                    },
-                });
-
-                if (!res.ok) {
-                    throw new Error(" ");
-                }
-
-                const data = await res.json();
-                setPrestamosPendientes(data.filter((p: any) => p.estado === "pendiente_aprobacion"));
-            } catch (error: any) {
-                setError(error.message);
-            }
-        };
-
-        fetchPrestamosPendientes();
-    }, [router, role]);
+    }, [role, router]);
 
     const handleAprobar = async (prestamoId: string) => {
         try {
@@ -81,6 +97,11 @@ const GestionarPrestamos = () => {
             setError(error.message);
         }
     };
+
+    // Si no se ha cargado el rol, mostrar mensaje de carga
+    if (!role) {
+        return <p>Cargando...</p>;
+    }
 
     return (
         <div style={{ display: "flex" }}>
