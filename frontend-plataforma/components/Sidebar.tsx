@@ -68,11 +68,6 @@ const Sidebar = ({ role }: SidebarProps) => {
                                 Ver Perfil de Usuario
                             </Link>
                         </li>
-                        <li>
-                            <Link href="/admin/VerAmortizacion" className="text-white text-decoration-none py-2">
-                                Ver Amortización
-                            </Link>
-                        </li>
                     </>
                 ) : (
                     <>

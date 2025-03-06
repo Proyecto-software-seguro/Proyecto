@@ -6,8 +6,11 @@ import styles from '../../styles/VerAmortizacion.module.css';
 interface Prestamo {
     id: string;
     monto: number;
+    tasa: number;
     plazo: number;
-    tasa_interes: number;
+    cuota_mensual: number;
+    estado: string;
+    fecha_inicio: string;
 }
 
 interface Amortizacion {
@@ -22,7 +25,7 @@ const VerAmortizacion = () => {
     const router = useRouter();
     const [clienteId, setClienteId] = useState("");
     const [prestamos, setPrestamos] = useState<Prestamo[]>([]);
-    const [selectedPrestamoId, setSelectedPrestamoId] = useState("");
+    const [selectedPrestamoId, setSelectedPrestamoId] = useState<string>("");
     const [amortizacion, setAmortizacion] = useState<Amortizacion[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [role, setRole] = useState<"administrador" | "cliente" | null>(null);
@@ -53,12 +56,20 @@ const VerAmortizacion = () => {
 
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch(`http://localhost:3002/api/prestamos/cliente/${clienteId}`, {
+            const res = await fetch(`http://localhost:3002/api/prestamos`, {
+                method: 'GET',
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
+                credentials: 'include',
+                mode: 'cors'  // Agregar modo explícito
             });
+
+            const contentType = res.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new Error("La respuesta no es JSON válido");
+            }
 
             if (!res.ok) {
                 const errorData = await res.json();
@@ -67,14 +78,19 @@ const VerAmortizacion = () => {
 
             const data = await res.json();
             if (Array.isArray(data) && data.length > 0) {
-                setPrestamos(data);
+                // Filtrar préstamos por el ID del cliente
+                const prestamosFiltrados = data.filter(prestamo => prestamo.usuario_id === clienteId);
+                if (prestamosFiltrados.length > 0) {
+                    setPrestamos(prestamosFiltrados);
+                } else {
+                    throw new Error("No hay préstamos registrados para este cliente");
+                }
             } else {
-                throw new Error("No hay préstamos registrados para este cliente");
+                throw new Error("No hay préstamos registrados");
             }
         } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message);
-            }
+            console.error("Error al buscar préstamos:", error); // Agregar log
+            setError(error instanceof Error ? error.message : "Error al buscar préstamos");
         }
     };
 
@@ -88,11 +104,19 @@ const VerAmortizacion = () => {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(`http://localhost:3002/api/prestamos/amortizacion/${prestamoId}`, {
+                method: 'GET',
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json"
                 },
+                credentials: 'include',
+                mode: 'cors'  // Agregar modo explícito
             });
+
+            const contentType = res.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new Error("La respuesta no es JSON válido");
+            }
 
             if (!res.ok) {
                 const errorData = await res.json();
@@ -106,9 +130,8 @@ const VerAmortizacion = () => {
                 throw new Error("No hay tabla de amortización disponible");
             }
         } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message);
-            }
+            console.error("Error al obtener amortización:", error); // Agregar log
+            setError(error instanceof Error ? error.message : "Error al obtener amortización");
         }
     };
 
@@ -124,8 +147,9 @@ const VerAmortizacion = () => {
 
                 <form onSubmit={handleBuscarPrestamos} className={styles.formGroup}>
                     <div>
-                        <label className={styles.label}>ID del Cliente:</label>
+                        <label htmlFor="clienteId" className={styles.label}>ID del Cliente:</label>
                         <input
+                            id="clienteId"
                             type="text"
                             value={clienteId}
                             onChange={(e) => setClienteId(e.target.value)}
@@ -143,8 +167,9 @@ const VerAmortizacion = () => {
 
                 {prestamos.length > 0 && (
                     <div className={styles.formGroup}>
-                        <label className={styles.label}>Seleccione Préstamo:</label>
+                        <label htmlFor="prestamo" className={styles.label}>Seleccione Préstamo:</label>
                         <select
+                            id="prestamo"
                             value={selectedPrestamoId}
                             onChange={(e) => handlePrestamoChange(e.target.value)}
                             className={styles.select}
@@ -152,7 +177,7 @@ const VerAmortizacion = () => {
                             <option value="">Seleccione un préstamo</option>
                             {prestamos.map((prestamo) => (
                                 <option key={prestamo.id} value={prestamo.id}>
-                                    Préstamo de ${prestamo.monto.toLocaleString()} - {prestamo.plazo} meses
+                                    Préstamo #{prestamo.id} - ${prestamo.monto.toLocaleString()} ({prestamo.estado})
                                 </option>
                             ))}
                         </select>
@@ -163,9 +188,9 @@ const VerAmortizacion = () => {
                     <table className={styles.table}>
                         <thead>
                         <tr>
-                            <th>Número de Cuota</th>
-                            <th>Monto de Cuota</th>
-                            <th>Saldo Restante</th>
+                            <th>Cuota</th>
+                            <th>Monto</th>
+                            <th>Saldo</th>
                             <th>Estado</th>
                         </tr>
                         </thead>
