@@ -46,7 +46,7 @@ const PagarCuotas = () => {
                     });
 
                     if (!res.ok) {
-                        throw new Error("Error al obtener préstamos");
+                        throw new Error("");
                     }
 
                     const data = await res.json();

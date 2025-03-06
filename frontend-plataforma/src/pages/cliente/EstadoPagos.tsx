@@ -31,8 +31,11 @@ export default function EstadoPagos() {
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const token = localStorage.getItem('token');
-            const role = localStorage.getItem('role') as 'administrador' | 'cliente';
+            // Usamos el operador de fusión nula para asignar un valor predeterminado si el token es null o undefined
+            const token = localStorage.getItem('token') ?? null;
+
+            // Usamos el operador de fusión nula para asignar un valor predeterminado si el role es null o undefined
+            const role = localStorage.getItem('role') as 'administrador' | 'cliente' ?? 'cliente';
 
             if (!token) {
                 router.push('/login');
@@ -52,7 +55,7 @@ export default function EstadoPagos() {
                     });
 
                     if (!res.ok) {
-                        throw new Error('Error al obtener los préstamos');
+                        throw new Error('');
                     }
 
                     const data = await res.json();
@@ -71,7 +74,9 @@ export default function EstadoPagos() {
         setError(null);
 
         try {
-            const token = localStorage.getItem('token');
+            // Usamos el operador de fusión nula para asignar un valor predeterminado si el token es null o undefined
+            const token = localStorage.getItem('token') ?? null;
+
             const res = await fetch(`http://localhost:3002/api/prestamos/amortizacion/${prestamoId}`, {
                 method: 'GET',
                 headers: {
@@ -108,7 +113,7 @@ export default function EstadoPagos() {
                     <select
                         id="prestamo"
                         onChange={(e) => handlePrestamoChange(e.target.value)}
-                        value={selectedPrestamoId || ''}
+                        value={selectedPrestamoId ?? ''}
                     >
                         <option value="">-- Selecciona un préstamo --</option>
                         {prestamos.map((prestamo) => (

@@ -38,7 +38,7 @@ export default function DatosFinancieros() {
                     });
 
                     if (!res.ok) {
-                        throw new Error('Error al obtener los datos financieros');
+                        throw new Error('');
                     }
 
                     const data = await res.json();

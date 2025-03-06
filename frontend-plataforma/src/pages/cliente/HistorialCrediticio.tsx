@@ -4,8 +4,9 @@ import Sidebar from '../../../components/Sidebar';
 import styles from '../../styles/HistorialCrediticio.module.css';
 
 interface CreditHistory {
+    id: string;
     descripcion: string;
-    puntaje: number;
+    puntaje_crediticio: number;
     fecha: string;
 }
 
@@ -62,15 +63,15 @@ export default function HistorialCrediticio() {
 
                 {creditHistory ? (
                     <div className={styles.creditHistory}>
-                        {creditHistory.map((history, index) => (
-                            <div key={index} className={styles.historyItem}>
+                        {creditHistory.map((history) => (
+                            <div key={history.id} className={styles.historyItem}>
                                 <div className={styles.dataRow}>
                                     <span className={styles.label}>Descripción:</span>
                                     <span className={styles.value}>{history.descripcion}</span>
                                 </div>
                                 <div className={styles.dataRow}>
                                     <span className={styles.label}>Puntaje:</span>
-                                    <span className={styles.value}>{history.puntaje}</span>
+                                    <span className={styles.value}>{history.puntaje_crediticio}</span>
                                 </div>
                                 <div className={styles.dataRow}>
                                     <span className={styles.label}>Fecha:</span>

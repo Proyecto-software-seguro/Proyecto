@@ -40,7 +40,7 @@ export default function DetallePrestamos() {
           });
 
           if (!res.ok) {
-            throw new Error('Error al obtener los préstamos');
+            throw new Error('');
           }
 
           const data = await res.json();

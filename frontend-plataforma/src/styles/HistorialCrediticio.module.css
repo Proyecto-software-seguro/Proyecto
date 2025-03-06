@@ -8,7 +8,6 @@
 }
 
 .contentContainer {
-    margin-left: 250px; /* Asegura que el contenido no se solape con el Sidebar */
     padding: 30px;
     width: 100%;
     max-width: 900px;
